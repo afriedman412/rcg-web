@@ -6,6 +6,7 @@ app = Dash(
     __name__,
     external_stylesheets=[dbc.themes.SLATE]
     )
+server = app.server
 
 full_chart, chart_date = load_chart()
 total_fig, pct_fig = (load_plot(full_chart, False), load_plot(full_chart, True))
