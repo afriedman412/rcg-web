@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "rcg_web"
+version = "0.1.0"
+description = ""
+authors = ["Andy Friedman <afriedman412@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+dash = "^2.6.2"
+plotly = "^5.10.0"
+SQLAlchemy = "^1.4.41"
+python-dotenv = "^0.21.0"
+dash-bootstrap-templates = "^1.0.7"
+dash-bootstrap-components = "^1.2.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
