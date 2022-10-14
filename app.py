@@ -15,16 +15,16 @@ total_plot, pct_plot = (dcc.Graph(figure=total_fig), dcc.Graph(figure=pct_fig))
 app.layout = html.Div(
     [
         html.Div([
-            "Rap Caviar Gender Distribution", 
-            html.Br(),
-            f"Week of {chart_date}"], style={'fontSize':35, 'margin-bottom':"1rem"}
+            html.H2("Rap Caviar Gender Distribution", style={"margin":"0px"}),
+            html.H3(f"Week of {chart_date}", style={"margin":"0px"})],
+            style={'margin-bottom':"10px"}
         ),
         html.Div(children=[
             dcc.Graph(id='total', figure=total_fig, className="six columns"),
             dcc.Graph(id='pct', figure=pct_fig, className="six columns"),
         ])
     ], 
-    style={"margin": "2rem 10rem 5rem"}
+    style={"margin": "2rem 5rem"}
     )
 
 if __name__ == "__main__":
