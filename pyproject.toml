@@ -12,6 +12,8 @@ SQLAlchemy = "^1.4.41"
 python-dotenv = "^0.21.0"
 dash-bootstrap-templates = "^1.0.7"
 dash-bootstrap-components = "^1.2.1"
+gunicorn = "^20.1.0"
+psycopg2-binary = "^2.9.4"
 
 [tool.poetry.dev-dependencies]
 
