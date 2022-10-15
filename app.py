@@ -2,6 +2,19 @@ from dash import Dash, dcc, html, dash_table
 import dash_bootstrap_components as dbc
 from rcg_web.code.helpers import load_chart, parse_chart, load_plot, format_features, gender_col_formatter
 
+# bright green: #1fd362
+# dark green: #047c2c
+# purple: #533b53
+# orange: #f09933
+# red: #ff1e00
+# grey: #585858
+
+colors = {
+    "m": "#a1c3d1",
+    "f": "#f09933",
+    "n": "#816f88"
+}
+
 ### TODO: move formatting to another doc
 app = Dash(
     __name__,
@@ -17,7 +30,6 @@ total_fig, pct_fig = (load_plot(full_chart, False), load_plot(full_chart, True))
 gcf = []
 for g in ['Male', 'Female', 'Non-Binary']:
     gcf += gender_col_formatter(g, full_chart) 
-print(gcf)
 
 dt = dash_table.DataTable(
     chart_w_features.to_dict('records'),
@@ -25,8 +37,10 @@ dt = dash_table.DataTable(
 )
 
 count = [
-    html.H4(
-        f"{d['gender']}: {d['count']} Appearances ({d['pct']}%)", style={"margin":"0px"})
+    html.H4(children=[
+        html.Span(f"{d['gender']}: ", style={"color":f"{colors[d['gender'][0].lower()]}"}),
+        html.Span(f"{d['count']} Appearances ({d['pct']}%)")],
+        style={"margin":"0px"})
         for d in total_chart_dict
     ]
 
@@ -35,15 +49,17 @@ app.layout = dbc.Container(
         dbc.Row(
             dbc.Col(
                 html.H1("Rap Caviar Gender Watch", 
-                # style={"margin-bottom":"2rem"}
+                style={"color":"#1fd362", "margin-bottom":"0rem"}
                 ),
                 width={"size":True}
-            )
+            ), style={"margin-bottom":"0rem"}
         ),
         # date
         dbc.Row(
             dbc.Col(
-                html.H2(f"{chart_date}", style={"margin-top":"0rem", "margin-bottom":"2rem"}), 
+                html.H2(f"{chart_date}", style={
+                    "color":"white", "margin-top":"0rem"
+                    }), 
                 width={"size":True})
         ),
         # full count

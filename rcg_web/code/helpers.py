@@ -71,9 +71,10 @@ def load_plot(full_chart, normalize=False):
             'x':0.5,
             'xanchor': 'center'
         },
-        yaxis_range=[0,110] if normalize else [0,count_df['count'].max()*1.2],
+        yaxis_range=[0,110] if normalize else [
+            0, count_df['count'].max()*1.2 if count_df['count'].max() > 100 else 100],
         margin=dict(t=50, r=20, l=20, b=30),
-        paper_bgcolor="LightSteelBlue"
+        paper_bgcolor="white"
         )
 
     if normalize:
