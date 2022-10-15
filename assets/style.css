@@ -319,12 +319,14 @@
   –––––––––––––––––––––––––––––––––––––––––––––––––– */
   table {
     border-collapse: collapse;
+    width:80%;
   }
   th:not(.CalendarDay),
   td:not(.CalendarDay) {
-    padding: 12px 15px;
+    /* padding: 12px 15px; */
     text-align: left;
-    border-bottom: 1px solid #E1E1E1; }
+    /* border-bottom: 1px solid #E1E1E1; */
+  }
   th:first-child:not(.CalendarDay),
   td:first-child:not(.CalendarDay) {
     padding-left: 0; }
@@ -376,10 +378,29 @@
     border-width: 0;
     border-top: 1px solid #E1E1E1; }
 
+  h1.section {
+    margin: 3rem 0rem 0rem 0.5rem;
+    text-align: center;
+    color: #1fd362;
+  }
+
+  h4.subheader{
+    margin: 3rem 0rem 0rem 0.5rem;
+    text-align: center;
+    color: white;
+  }
+
   .dash-graph {
       zoom: 0.75;
     }
   
+  span.artist {
+    text-align: left;
+  }
+
+  span.count {
+    text-align: right;
+  }
   
   /* Clearing
   –––––––––––––––––––––––––––––––––––––––––––––––––– */

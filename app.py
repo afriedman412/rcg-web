@@ -1,6 +1,6 @@
 from dash import Dash, dcc, html, dash_table
 import dash_bootstrap_components as dbc
-from rcg_web.code.helpers import load_chart, parse_chart, load_plot, format_features, gender_col_formatter
+from rcg_web.code.helpers import load_chart, parse_chart, load_plot, format_features, gender_rows_formatter
 
 # bright green: #1fd362
 # dark green: #047c2c
@@ -25,11 +25,14 @@ server = app.server
 full_chart, chart_date = load_chart()
 chart_w_features = format_features(full_chart)
 total_chart_dict = parse_chart(full_chart)
-total_fig, pct_fig = (load_plot(full_chart, False), load_plot(full_chart, True))
+total_fig, pct_fig = (
+    load_plot(full_chart, list(colors.values()), False), 
+    load_plot(full_chart, list(colors.values()), True)
+    )
 
-gcf = []
-for g in ['Male', 'Female', 'Non-Binary']:
-    gcf += gender_col_formatter(g, full_chart) 
+gender_rows = {
+    g:gender_rows_formatter(g, full_chart) for g in ['Male', 'Female', 'Non-Binary']
+}
 
 dt = dash_table.DataTable(
     chart_w_features.to_dict('records'),
@@ -48,7 +51,11 @@ app.layout = dbc.Container(
     [
         dbc.Row(
             dbc.Col(
-                html.H1("Rap Caviar Gender Watch", 
+                html.H1(children=[
+                    html.A("Rap Caviar", 
+                    href="https://open.spotify.com/playlist/37i9dQZF1DX0XUsuxWHRQd",
+                    style={"color":"#1fd362"}
+                    ), " Gender Tracker"], 
                 style={"color":"#1fd362", "margin-bottom":"0rem"}
                 ),
                 width={"size":True}
@@ -62,6 +69,7 @@ app.layout = dbc.Container(
                     }), 
                 width={"size":True})
         ),
+
         # full count
         dbc.Row(
             children=[
@@ -74,6 +82,9 @@ app.layout = dbc.Container(
             ]
         ),
         # bar chart
+        dbc.Row(
+            html.H1("GRAPHS", className="section")
+        ),
         dbc.Row(children=[
             html.A(id="plot"),
             dbc.Col(
@@ -81,7 +92,7 @@ app.layout = dbc.Container(
                     dcc.Graph(
                         id=id_, 
                         figure=fig, 
-                        className="six columns", 
+                        className="six columns",
                         config={'displayModeBar': False}) 
                         for id_, fig in [('total', total_fig), ('pct', pct_fig)]
                         ]
@@ -92,21 +103,18 @@ app.layout = dbc.Container(
             ]),
         # full chart
         # dbc.Row(dt, style={'margin-top':"2rem"}),
-
-        # # gender counts
-        # dbc.Row(children=[
-        #     dbc.Col(html.H5("YYY"), width=3),
-        #     dbc.Col(html.H5("6"), width=1)
-        #     ]
-        # ),
-        # dbc.Row(children=[
-        #     dbc.Col(html.H5("XXXXX XXXXXXXX XXXXXXX XXXXXXX"), width=3),
-        #     dbc.Col(html.H5("633"), width=1)
-        #     ]
-        # ),
-
-    ],
-    style={'margin-top':"2rem"}
+        dbc.Row(
+            html.H1("BREAKDOWN", className="section")
+        ),
+        # TODO: add gender counts, add header columns, remove underlines, fix spacing
+        dbc.Row(
+            children=[
+                dbc.Col(children=[
+                    html.H4(g, className="subheader"),
+                    html.Table(children=gender_rows[g])],width=4) for g in ['Male','Female','Non-Binary']
+                ] 
+                ),
+            ], style={'margin-top':"2rem"}
     )
 
 if __name__ == "__main__":

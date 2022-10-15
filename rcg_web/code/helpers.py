@@ -25,7 +25,8 @@ def load_chart():
 def format_features(full_chart):
     features = full_chart.query("primary_artist_name != artist_name").groupby("song_name")['artist_name'].apply(lambda a: ", ".join(a))
     main_chart = full_chart.query("primary_artist_name == artist_name").set_index("song_name")
-    chart_w_features = main_chart.drop(['chart_date', 'artist_name', 'gender'],1).join(features).reset_index().rename(columns={'artist_name':'features'})
+    chart_w_features = main_chart.drop(
+        ['chart_date', 'artist_name', 'gender'],axis=1).join(features).reset_index().rename(columns={'artist_name':'features'})
     return chart_w_features
 
 def parse_chart(full_chart):
@@ -38,19 +39,21 @@ def parse_chart(full_chart):
         total_chart_dict.append({"gender":k, "count":0, "pct":0})
     return total_chart_dict
 
-def gender_col_formatter(g, full_chart):
+def gender_rows_formatter(g, full_chart):
     l = len(full_chart.query(f"gender=='{g}'"))
     g_list = full_chart.query(f"gender=='{g}'")['artist_name'].value_counts().reset_index().values
-    artists = [a[0] for a in g_list]
-    counts = [a[1] for a in g_list]
-    gender_col = [
-        dbc.Col(children=[html.H4(g)] + [html.H6(a) for a in artists], width=3),
-        dbc.Col(children=[html.H4(l)] + [html.H6(c) for c in counts], width=1),
+    # return a list of table rows
+    gender_rows = [
+        html.Tr(children=[
+            html.Td(a[0]),
+            html.Td(a[1]),
+            ]
+            ) for a in g_list
         ]
-    return gender_col
+    return gender_rows
 
 
-def load_plot(full_chart, normalize=False):
+def load_plot(full_chart, colors, normalize=False):
     count_df = full_chart['gender'].value_counts(normalize=normalize).rename_axis('gender').reset_index(name='count')
     count_df['format'] = 'Percentage' if normalize else 'Total'
 
@@ -59,7 +62,9 @@ def load_plot(full_chart, normalize=False):
 
     fig = go.Figure(
         go.Bar(
-            x=count_df['gender'], y=count_df['count'],
+            x=count_df['gender'], 
+            y=count_df['count'],
+            marker_color=colors,
             text=count_df['count'],
             textposition='outside'
         )
@@ -69,12 +74,14 @@ def load_plot(full_chart, normalize=False):
         title = {
             'text':"% of Total Artist Appearances" if normalize else "Total Artist Appearances",
             'x':0.5,
-            'xanchor': 'center'
+            'xanchor': 'center',
+            'font_size': 20
         },
         yaxis_range=[0,110] if normalize else [
             0, count_df['count'].max()*1.2 if count_df['count'].max() > 100 else 100],
         margin=dict(t=50, r=20, l=20, b=30),
-        paper_bgcolor="white"
+        paper_bgcolor="white",
+        plot_bgcolor="white"
         )
 
     if normalize:
