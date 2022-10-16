@@ -26,9 +26,11 @@ full_chart, chart_date = load_chart()
 chart_w_features = format_features(full_chart)
 total_chart_dict = parse_chart(full_chart)
 total_fig, pct_fig = (
-    load_plot(full_chart, list(colors.values()), False), 
-    load_plot(full_chart, list(colors.values()), True)
+    load_plot(full_chart, chart_date, list(colors.values()), False), 
+    load_plot(full_chart, chart_date, list(colors.values()), True)
     )
+
+
 
 gender_rows = {
     g:gender_rows_formatter(g, full_chart) for g in ['Male', 'Female', 'Non-Binary']
@@ -42,7 +44,7 @@ dt = dash_table.DataTable(
 count = [
     html.H4(children=[
         html.Span(f"{d['gender']}: ", style={"color":f"{colors[d['gender'][0].lower()]}"}),
-        html.Span(f"{d['count']} Appearances ({d['pct']}%)")],
+        html.Span(f"{d['count']} Credits ({d['pct']}%)")],
         style={"margin":"0px"})
         for d in total_chart_dict
     ]
@@ -82,35 +84,24 @@ app.layout = dbc.Container(
             ]
         ),
         # bar chart
-        dbc.Row(
-            html.H1("GRAPHS", className="section")
-        ),
+        html.A(id="plot"),
         dbc.Row(children=[
-            html.A(id="plot"),
-            dbc.Col(
-                html.Div(children=[
+            dbc.Col(children=[
                     dcc.Graph(
                         id=id_, 
-                        figure=fig, 
-                        className="six columns",
-                        config={'displayModeBar': False}) 
-                        for id_, fig in [('total', total_fig), ('pct', pct_fig)]
-                        ]
-                    ),
-            style={'margin':"2rem 0rem"},
-            width={"size":True}
+                        figure=fig,
+                        config={'staticPlot': True}
+                        )], width=6
+                    ) for id_, fig in [('total', total_fig), ('pct', pct_fig)]
+                ],
+            style={'margin':"2rem 0rem"}
             ),
-            ]),
         # full chart
-        # dbc.Row(dt, style={'margin-top':"2rem"}),
-        dbc.Row(
-            html.H1("BREAKDOWN", className="section")
-        ),
-        # TODO: add gender counts, add header columns, remove underlines, fix spacing
+        # TODO: add gender counts, add header columns
         dbc.Row(
             children=[
                 dbc.Col(children=[
-                    html.H4(g, className="subheader"),
+                    html.H5(g, className="subheader"),
                     html.Table(children=gender_rows[g])],width=4) for g in ['Male','Female','Non-Binary']
                 ] 
                 ),

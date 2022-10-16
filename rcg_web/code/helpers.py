@@ -53,7 +53,7 @@ def gender_rows_formatter(g, full_chart):
     return gender_rows
 
 
-def load_plot(full_chart, colors, normalize=False):
+def load_plot(full_chart, chart_date, colors, normalize=False):
     count_df = full_chart['gender'].value_counts(normalize=normalize).rename_axis('gender').reset_index(name='count')
     count_df['format'] = 'Percentage' if normalize else 'Total'
 
@@ -72,7 +72,7 @@ def load_plot(full_chart, colors, normalize=False):
 
     fig.update_layout(
         title = {
-            'text':"% of Total Artist Appearances" if normalize else "Total Artist Appearances",
+            'text':f"% of Total Artist Credits ({chart_date})" if normalize else f"Total Artist Credits ({chart_date})",
             'x':0.5,
             'xanchor': 'center',
             'font_size': 20
