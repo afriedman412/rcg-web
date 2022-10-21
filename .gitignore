@@ -7,3 +7,4 @@ notes.md
 .ipynp_checkpoints/
 .DS_Store
 .env
+.flaskenv

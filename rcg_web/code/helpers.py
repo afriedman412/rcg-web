@@ -2,8 +2,8 @@ import datetime as dt
 import pandas as pd
 import plotly.graph_objects as go
 from dash import html
-import dash_bootstrap_components as dbc
 from .. import engine
+from ..config.config import COLORS
 
 def load_chart():
     with engine.connect() as conn:
@@ -53,7 +53,7 @@ def gender_rows_formatter(g, full_chart):
     return gender_rows
 
 
-def load_plot(full_chart, chart_date, colors, normalize=False):
+def load_plot(full_chart, chart_date, normalize=False):
     count_df = full_chart['gender'].value_counts(normalize=normalize).rename_axis('gender').reset_index(name='count')
     count_df['format'] = 'Percentage' if normalize else 'Total'
 
@@ -64,15 +64,17 @@ def load_plot(full_chart, chart_date, colors, normalize=False):
         go.Bar(
             x=count_df['gender'], 
             y=count_df['count'],
-            marker_color=colors,
+            marker_color=list(COLORS.values()),
             text=count_df['count'],
             textposition='outside'
         )
     )
-
+    title = f"Total Artist Credits<br>({chart_date})"
+    if normalize:
+        title = "% of " + title
     fig.update_layout(
         title = {
-            'text':f"% of Total Artist Credits ({chart_date})" if normalize else f"Total Artist Credits ({chart_date})",
+            'text':title,
             'x':0.5,
             'xanchor': 'center',
             'font_size': 20
