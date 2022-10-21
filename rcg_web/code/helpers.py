@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from dash import html
 from .. import engine
-from ..config.config import COLORS
+from ..config.config import COLORS, GENDERS
 
 def load_chart():
     with engine.connect() as conn:
@@ -37,9 +37,20 @@ def parse_chart(full_chart):
     pct_df['pct'] = pct_df['pct'].map(lambda c: c*100).round(2)
     total_df=total_df.set_index('gender').join(pct_df.set_index("gender")).reset_index()
     total_chart_dict = total_df.to_dict("records")
-    for k in {'Male', 'Female', 'Non-Binary'}.difference(set([d['gender'] for d in total_chart_dict])):
+    for k in set(GENDERS).difference(set([d['gender'] for d in total_chart_dict])):
         total_chart_dict.append({"gender":k, "count":0, "pct":0})
     return total_chart_dict
+
+def gender_rows_df(full_chart):
+    gender_counts = {
+        c:full_chart.query(f"gender=='{c}'")['artist_name'].value_counts().reset_index() for c in GENDERS
+    }
+
+    gender_counts_df = gender_counts['Male'].join(gender_counts['Female'], lsuffix="m_", rsuffix="f_").join(
+        gender_counts['Non-Binary'], rsuffix="n_"
+    )
+
+    return gender_counts_df
 
 def gender_rows_formatter(g, full_chart):
     l = len(full_chart.query(f"gender=='{g}'"))

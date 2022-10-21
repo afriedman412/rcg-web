@@ -16,3 +16,4 @@ COLORS = {
     "Non-Binary": "#816f88"
 }
 
+GENDERS = ['Male', 'Female', 'Non-Binary']

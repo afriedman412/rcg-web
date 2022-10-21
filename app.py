@@ -48,11 +48,17 @@ app.layout = html.Div(
             style={'margin':"2rem 0rem"}
                 ),
 
-        # full chart
+         # full chart
         html.A(id="Chart"),
-        dbc.Row(container_content['full_chart'],
+        dbc.Row(
+            children=container_content['full_chart'],
             style={'margin':"2rem 0rem"}
         ),
+        # full chart
+        # html.A(id="Chart"),
+        # dbc.Row(container_content['full_chart'],
+        #     style={'margin':"2rem 0rem"}
+        # ),
         html.A(id="FAQ"),
         dbc.Row(
             dbc.Col([

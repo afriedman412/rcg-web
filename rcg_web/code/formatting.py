@@ -1,7 +1,7 @@
-from .helpers import load_chart, format_features, parse_chart, load_plot, gender_rows_formatter
+from .helpers import load_chart, format_features, parse_chart, load_plot, gender_rows_df
 import dash_bootstrap_components as dbc
 from dash import html, dash_table, dcc
-from ..config.config import COLORS
+from ..config.config import COLORS, GENDERS
 
 full_chart, chart_date = load_chart()
 chart_w_features = format_features(full_chart)
@@ -11,26 +11,7 @@ total_fig, pct_fig = (
     load_plot(full_chart, chart_date, True)
     )
 
-gender_rows = {
-    g:gender_rows_formatter(g, full_chart) for g in ['Male', 'Female', 'Non-Binary']
-}
-
-dt = dash_table.DataTable(
-    data=chart_w_features.to_dict('records'),
-    columns=[{"name": i, "id": i} for i in chart_w_features.columns],
-    fixed_rows={'headers':True},
-    style_table={'overflowY': 'scroll', 'height':800},
-    style_cell={'textAlign': 'center'},
-    style_header={
-        'backgroundColor': 'rgb(30, 30, 30)',
-        'color': 'white'
-    },
-    style_data={
-        'backgroundColor': 'rgb(50, 50, 50)',
-        'color': 'white'
-    }
-    
-)
+gender_rows = gender_rows_df(full_chart)
 
 nav = [
     html.Ul(
@@ -78,23 +59,54 @@ container_content = {
                         )], width=6
                     ) for id_, fig in [('total', total_fig), ('pct', pct_fig)]
                 ],
-    
-    "tally": [html.H3(html.A('Tally', href="#top"), className="subheader")] + [
-                dbc.Col(children=[
-                    html.H4(
-                        g, 
-                        # className="subheader",
-                        style={"color":COLORS[g], "text-align":"center"}
-                        ),
-                    html.Table(children=gender_rows[g])],width=4) for g in ['Male','Female','Non-Binary']
-                ],
-
+    "tally": [
+        html.H3(html.A('Tally', href="#top"), className="subheader") 
+        ] + [
+            dbc.Row(
+                children=[
+                    dbc.Col(html.H4(c, style={
+                        "text-align":"center",
+                        "color": COLORS[c]
+                        })) for c in GENDERS
+                ])
+    ] + [
+            dbc.Row(children=[
+                    dbc.Col(
+                        html.Span(d[c] if c else ""), 
+                        style={
+                            'margin':"0rem 0.5rem 0rem 0rem" if n_%2!=0 else "0rem 0rem 0rem 0.5rem",
+                            'color': "black",
+                            'background-color': "gray" if n%2==0 else "dimgrey"
+                            }) for n_, c in enumerate(gender_rows.columns)
+                     
+                ]) for n, d in enumerate(gender_rows.to_dict('records'))
+    ],
     "full_chart": [
-        dbc.Col(children=[
-            html.H3(html.A('Full Chart', href="#top"), className="subheader"),
-            html.Div(dt, style={"margin-top":"2rem"})
-        ])
+        html.H3(html.A('Full Chart', href="#top"), className="subheader") 
+        ] + [
+            dbc.Row(
+                children=[
+                    dbc.Col(html.H4(c, style={"text-align":"center"})) for c in ['Song', 'Primary Artist', 'Features']
+                ])
+    ] + [
+            dbc.Row(children=[
+                    dbc.Col(
+                        html.Span(d[c]), 
+                        style={
+                            'margin':"0rem 0.5rem",
+                            'color': "black",
+                            'background-color': "gray" if n%2==0 else "dimgrey"
+                            }) for c in ['Song', 'Primary Artist', 'Features']
+                     
+                ]) for n, d in enumerate(chart_w_features.to_dict('records'))
     ]
+
+    # "full_chart_old": [
+    #     dbc.Col(children=[
+    #         html.H3(html.A('Full Chart', href="#top"), className="subheader"),
+    #         html.Div(dt, style={"margin-top":"2rem"})
+    #     ])
+    # ]
 }
 
 faq = dcc.Markdown('''#### This is the gender balance for today's Spotify [Rap Caviar](https://open.spotify.com/playlist/37i9dQZF1DX0XUsuxWHRQd) playlist, updated daily at midnight UTC.
