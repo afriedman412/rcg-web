@@ -26,7 +26,9 @@ def format_features(full_chart):
     features = full_chart.query("primary_artist_name != artist_name").groupby("song_name")['artist_name'].apply(lambda a: ", ".join(a))
     main_chart = full_chart.query("primary_artist_name == artist_name").set_index("song_name")
     chart_w_features = main_chart.drop(
-        ['chart_date', 'artist_name', 'gender'],axis=1).join(features).reset_index().rename(columns={'artist_name':'features'})
+        ['chart_date', 'artist_name', 'gender'],axis=1).join(features).reset_index().rename(columns={'artist_name':'features'}).fillna("none")
+
+    chart_w_features.columns = ['Song', 'Primary Artist', 'Features']
     return chart_w_features
 
 def parse_chart(full_chart):

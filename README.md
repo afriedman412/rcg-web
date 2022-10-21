@@ -1,0 +1,5 @@
+- This is the gender balance for today's Spotify [Rap Caviar](https://open.spotify.com/playlist/37i9dQZF1DX0XUsuxWHRQd) playlist, updated daily at midnight UTC.
+- The purpose of this project is to call attention to the way that, despite the fact that we are in a golden age of female rap, the genre is still dominated by male artists.
+- Non-binary artists are included as well, although their data may only be present if there is a non-binary person on the chart.
+- Rap Caviar is only one of many many Spotify playlists and Spotify is only one of many music outlets, but its prominence still reflects industry trends in a way that I feel makes the point.
+- Genders are inferred automatically from the pronouns on an artist's Last FM and Wikipedia biographies, and manually corrected as needed. If anyone is misgendered, [please let me know!](https://twitter.com/steadynappin_)

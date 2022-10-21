@@ -1,6 +1,6 @@
 from dash import Dash, html
 import dash_bootstrap_components as dbc
-from rcg_web.code.formatting import container_content
+from rcg_web.code.formatting import container_content, nav, faq
 
 ### TODO: add calendar picker and webhooks
 app = Dash(
@@ -10,8 +10,10 @@ app = Dash(
 app.title= "Rap Caviar Gender Tracker"
 server = app.server
 
-app.layout = dbc.Container(
-    [
+app.layout = html.Div(
+    children=[
+        html.A(id="Top"),
+        dbc.Container([  
         dbc.Row(
             dbc.Col(
                 container_content['title'],
@@ -23,24 +25,44 @@ app.layout = dbc.Container(
             dbc.Col(container_content['date'], 
                 width={"size":True})
         ),
+        dbc.Row(
+            dbc.Col(nav)
+        ),
 
-        # full count
+        # count
+        html.A(id="Count"),
         dbc.Row(
             children=container_content['full_count']
         ),
 
         # bar chart
-        html.A(id="plot"),
+        html.A(id="bar_chart"),
         dbc.Row(children=container_content['bar_chart'],
             style={'margin':"2rem 0rem"}
             ),
 
-        # full table
+        # tally
+        html.A(id="Tally"),
         dbc.Row(
-            children=container_content['full_table'] 
+            children=container_content['tally'],
+            style={'margin':"2rem 0rem"}
                 ),
-            ], style={'margin-top':"2rem"}
-    )
+
+        # full chart
+        html.A(id="Chart"),
+        dbc.Row(container_content['full_chart'],
+            style={'margin':"2rem 0rem"}
+        ),
+        html.A(id="FAQ"),
+        dbc.Row(
+            dbc.Col([
+                html.H3(html.A('FAQs', href="#top"), className="subheader"),
+                faq
+                ])
+        )
+            ], style={'margin':"2rem auto"}
+        
+    )])
 
 if __name__ == "__main__":
     app.run_server()
