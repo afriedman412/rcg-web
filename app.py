@@ -7,6 +7,7 @@ app = Dash(
     __name__,
     external_stylesheets=[dbc.themes.SLATE]
     )
+app.title= "Rap Caviar Gender Tracker"
 server = app.server
 
 app.layout = dbc.Container(
@@ -33,7 +34,7 @@ app.layout = dbc.Container(
         dbc.Row(children=container_content['bar_chart'],
             style={'margin':"2rem 0rem"}
             ),
-            
+
         # full table
         dbc.Row(
             children=container_content['full_table'] 

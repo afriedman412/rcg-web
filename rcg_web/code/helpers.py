@@ -52,12 +52,13 @@ def gender_rows_formatter(g, full_chart):
         ]
     return gender_rows
 
-
 def load_plot(full_chart, chart_date, normalize=False):
     count_df = full_chart['gender'].value_counts(normalize=normalize).rename_axis('gender').reset_index(name='count')
     count_df['format'] = 'Percentage' if normalize else 'Total'
-
+    title = f"Total Artist Credits<br>({chart_date})"
+    
     if normalize:
+        title = f"% of Artist Credits<br>({chart_date})"
         count_df['count'] = count_df['count'].round(3)*100
 
     fig = go.Figure(
@@ -69,21 +70,20 @@ def load_plot(full_chart, chart_date, normalize=False):
             textposition='outside'
         )
     )
-    title = f"Total Artist Credits<br>({chart_date})"
-    if normalize:
-        title = "% of " + title
+    
     fig.update_layout(
         title = {
             'text':title,
             'x':0.5,
             'xanchor': 'center',
-            'font_size': 20
+            'yanchor': 'bottom'
         },
         yaxis_range=[0,110] if normalize else [
-            0, count_df['count'].max()*1.2 if count_df['count'].max() > 100 else 100],
-        margin=dict(t=50, r=20, l=20, b=30),
+            0, count_df['count'].max()*1.2],
+        margin=dict(t=70, r=20, l=20, b=30),
         paper_bgcolor="white",
-        plot_bgcolor="white"
+        plot_bgcolor="white",
+        autosize=True
         )
 
     if normalize:
