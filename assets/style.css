@@ -379,13 +379,11 @@
     border-top: 1px solid #E1E1E1; }
 
   h1.section {
-    margin: 3rem 0rem 0rem 0.5rem;
     text-align: center;
     color: #1fd362;
   }
 
   .subheader{
-    margin: 3rem 0rem 0rem 1rem;
     text-align: center;
     color: white;
   }
@@ -409,6 +407,45 @@
   span.count {
     text-align: right;
   }
+
+  .male {
+    color: #a1c3d1
+  }
+
+  .female {
+    color: #f09933
+  }
+
+  .non-binary {
+    color: #816f88
+  }
+
+  .grid-container {
+    display: grid;
+    grid-template-columns: 
+      800px
+      repeat(3, 30%)
+      repeat(3, 20% 7%);
+    grid-template-rows: 7vh 4vh;
+    grid-auto-rows: 2vh;
+    grid-gap: 10px;
+    justify-content: center;
+    margin-top: 5vh;
+    width: 80%;
+}
+
+.grid-item-title {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-size: 32px;
+    text-decoration: underline;
+    color: white;
+}
+
+.grid-item-col-header {
+    text-align: center;
+    font-size: 18px;
+}
   
   /* Clearing
   –––––––––––––––––––––––––––––––––––––––––––––––––– */

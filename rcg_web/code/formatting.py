@@ -1,6 +1,6 @@
 from .helpers import load_chart, format_features, parse_chart, load_plot, gender_rows_df
 import dash_bootstrap_components as dbc
-from dash import html, dash_table, dcc
+from dash import html, dcc
 from ..config.config import COLORS, GENDERS
 
 full_chart, chart_date = load_chart()
@@ -38,6 +38,7 @@ container_content = {
                     ), " Gender Tracker"], 
                 style={"color":"#1fd362", "margin-bottom":"0rem"}
                 ),
+
     "date": html.H2(f"{chart_date}", style={
                     "color":"white", "margin-top":"0rem"
                     }),
@@ -59,6 +60,7 @@ container_content = {
                         )], width=6
                     ) for id_, fig in [('total', total_fig), ('pct', pct_fig)]
                 ],
+
     "tally": [
         html.H3(html.A('Tally', href="#top"), className="subheader") 
         ] + [
@@ -69,18 +71,26 @@ container_content = {
                         "color": COLORS[c]
                         })) for c in GENDERS
                 ])
-    ] + [
-            dbc.Row(children=[
-                    dbc.Col(
-                        html.Span(d[c] if c else ""), 
+        ] + [
+                dbc.Row(children=[
+                    dbc.Col(children=[
+                        html.Span(d[a] if a else "", style={"float":"left"}),
+                        html.Span(d[g], style={"float":"right"})
+                        ],
                         style={
-                            'margin':"0rem 0.5rem 0rem 0rem" if n_%2!=0 else "0rem 0rem 0rem 0.5rem",
+                            'margin':"0rem 0.5rem",
+                            'font-size': "75%",
                             'color': "black",
-                            'background-color': "gray" if n%2==0 else "dimgrey"
-                            }) for n_, c in enumerate(gender_rows.columns)
+                            'background-color': "gray" if n%2==0 else "dimgrey",
+                            'width': "1fr",
+                            },
+                            ) for a, g in zip(gender_rows.columns[::2], gender_rows.columns[1::2])
                      
-                ]) for n, d in enumerate(gender_rows.to_dict('records'))
+                ],
+                style={"justify-content":"center"}
+                ) for n, d in enumerate(gender_rows.to_dict('records'))
     ],
+
     "full_chart": [
         html.H3(html.A('Full Chart', href="#top"), className="subheader") 
         ] + [
@@ -94,19 +104,13 @@ container_content = {
                         html.Span(d[c]), 
                         style={
                             'margin':"0rem 0.5rem",
+                            'font-size': "75%",
                             'color': "black",
                             'background-color': "gray" if n%2==0 else "dimgrey"
                             }) for c in ['Song', 'Primary Artist', 'Features']
                      
                 ]) for n, d in enumerate(chart_w_features.to_dict('records'))
     ]
-
-    # "full_chart_old": [
-    #     dbc.Col(children=[
-    #         html.H3(html.A('Full Chart', href="#top"), className="subheader"),
-    #         html.Div(dt, style={"margin-top":"2rem"})
-    #     ])
-    # ]
 }
 
 faq = dcc.Markdown('''#### This is the gender balance for today's Spotify [Rap Caviar](https://open.spotify.com/playlist/37i9dQZF1DX0XUsuxWHRQd) playlist, updated daily at midnight UTC.
@@ -118,3 +122,59 @@ faq = dcc.Markdown('''#### This is the gender balance for today's Spotify [Rap C
 #### Rap Caviar is only one of many many Spotify playlists and Spotify is only one of many music outlets, but its prominence still reflects industry trends in a way that I feel makes the point.
 
 #### Genders are inferred automatically from the pronouns on an artist's Last FM and Wikipedia biographies, and manually corrected as needed. If anyone is misgendered, [please let me know!](https://twitter.com/steadynappin_)''')
+
+full_layout = html.Div(
+    children=[
+        html.A(id="Top"),
+        dbc.Container([  
+        dbc.Row(
+            dbc.Col(
+                container_content['title'],
+                width={"size":True}
+            ), style={"margin-bottom":"0rem"}
+        ),
+        # date
+        dbc.Row(
+            dbc.Col(container_content['date'], 
+                width={"size":True})
+        ),
+        dbc.Row(
+            dbc.Col(nav)
+        ),
+
+        # count
+        html.A(id="Count"),
+        dbc.Row(
+            children=container_content['full_count']
+        ),
+
+        # bar chart
+        html.A(id="bar_chart"),
+        dbc.Row(children=container_content['bar_chart'],
+            style={'margin':"2rem 0rem"}
+            ),
+
+        # tally
+        html.A(id="Tally"),
+        dbc.Row(
+        children=container_content['tally'],
+            ),
+        
+        # full chart
+        html.A(id="Chart"),
+        dbc.Row(
+            children=container_content['full_chart'],
+            style={'margin':"2rem 0rem"}
+        ),
+
+        # FAQ
+        html.A(id="FAQ"),
+        dbc.Row(
+            dbc.Col([
+                html.H3(html.A('FAQs', href="#top"), className="subheader"), faq
+                ])
+        )
+            ], style={'margin':"2rem auto"}
+        
+    )])
+
