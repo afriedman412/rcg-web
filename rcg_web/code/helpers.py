@@ -46,60 +46,60 @@ def gender_rows_df(full_chart):
         c:full_chart.query(f"gender=='{c}'")['artist_name'].value_counts().reset_index() for c in GENDERS
     }
 
-    gender_counts_df = gender_counts['Male'].join(gender_counts['Female'], lsuffix="m_", rsuffix="f_").join(
-        gender_counts['Non-Binary'], rsuffix="n_"
+    gender_counts_df = gender_counts['Male'].join(gender_counts['Female'], lsuffix="_m", rsuffix="_f").join(
+        gender_counts['Non-Binary'], rsuffix="_n"
     )
 
     return gender_counts_df
 
-def gender_rows_formatter(g, full_chart):
-    l = len(full_chart.query(f"gender=='{g}'"))
-    g_list = full_chart.query(f"gender=='{g}'")['artist_name'].value_counts().reset_index().values
-    # return a list of table rows
-    gender_rows = [
-        html.Tr(children=[
-            html.Td(a[0]),
-            html.Td(a[1]),
-            ]
-            ) for a in g_list
-        ]
-    return gender_rows
+# def gender_rows_formatter(g, full_chart):
+#     l = len(full_chart.query(f"gender=='{g}'"))
+#     g_list = full_chart.query(f"gender=='{g}'")['artist_name'].value_counts().reset_index().values
+#     # return a list of table rows
+#     gender_rows = [
+#         html.Tr(children=[
+#             html.Td(a[0]),
+#             html.Td(a[1]),
+#             ]
+#             ) for a in g_list
+#         ]
+#     return gender_rows
 
-def load_plot(full_chart, chart_date, normalize=False):
-    count_df = full_chart['gender'].value_counts(normalize=normalize).rename_axis('gender').reset_index(name='count')
-    count_df['format'] = 'Percentage' if normalize else 'Total'
-    title = f"Total Artist Credits<br>({chart_date})"
+# def load_plot(full_chart, chart_date, normalize=False):
+#     count_df = full_chart['gender'].value_counts(normalize=normalize).rename_axis('gender').reset_index(name='count')
+#     count_df['format'] = 'Percentage' if normalize else 'Total'
+#     title = f"Total Artist Credits<br>({chart_date})"
     
-    if normalize:
-        title = f"% of Artist Credits<br>({chart_date})"
-        count_df['count'] = count_df['count'].round(3)*100
+#     if normalize:
+#         title = f"% of Artist Credits<br>({chart_date})"
+#         count_df['count'] = count_df['count'].round(3)*100
 
-    fig = go.Figure(
-        go.Bar(
-            x=count_df['gender'], 
-            y=count_df['count'],
-            marker_color=list(COLORS.values()),
-            text=count_df['count'],
-            textposition='outside'
-        )
-    )
+#     fig = go.Figure(
+#         go.Bar(
+#             x=count_df['gender'], 
+#             y=count_df['count'],
+#             marker_color=list(COLORS.values()),
+#             text=count_df['count'],
+#             textposition='outside'
+#         )
+#     )
     
-    fig.update_layout(
-        title = {
-            'text':title,
-            'x':0.5,
-            'xanchor': 'center',
-            'yanchor': 'bottom'
-        },
-        yaxis_range=[0,110] if normalize else [
-            0, count_df['count'].max()*1.2],
-        margin=dict(t=70, r=20, l=20, b=30),
-        paper_bgcolor="white",
-        plot_bgcolor="white",
-        autosize=True
-        )
+#     fig.update_layout(
+#         title = {
+#             'text':title,
+#             'x':0.5,
+#             'xanchor': 'center',
+#             'yanchor': 'bottom'
+#         },
+#         yaxis_range=[0,110] if normalize else [
+#             0, count_df['count'].max()*1.2],
+#         margin=dict(t=70, r=20, l=20, b=30),
+#         paper_bgcolor="white",
+#         plot_bgcolor="white",
+#         autosize=True
+#         )
 
-    if normalize:
-        fig.update_traces(texttemplate='%{y:.1f}%')
+#     if normalize:
+#         fig.update_traces(texttemplate='%{y:.1f}%')
 
-    return fig
+#     return fig
