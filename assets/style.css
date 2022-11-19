@@ -35,9 +35,10 @@ a {
   color: #816f88
 }
 
-.faq {
+.spacer {
   grid-column: 1 / -1;
-  margin-bottom: 0;
+  margin-bottom: 5vh;
+  float: left;
 }
 
 .wrapper {
@@ -46,6 +47,12 @@ a {
   grid-template-columns: repeat(3, 1fr);
   grid-column-gap: 2%;
   margin: 5vh auto 2vh;
+}
+
+.bar-charts {
+  grid-column: 1 / -1;
+  width: 100%;
+  float: left;
 }
 
 .chart-title {
