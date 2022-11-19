@@ -18,7 +18,7 @@ logging.basicConfig(
 app = Dash(__name__, title="Rap Caviar Gender Tracker")
 server = app.server
 
-gm = GridMaker(date="2022-10-23")
+gm = GridMaker()
 app.layout = gm.full_layout()
 
 if __name__ == "__main__":
