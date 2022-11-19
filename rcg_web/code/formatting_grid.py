@@ -1,11 +1,22 @@
+"""
+New version.
+"""
+
 from dash import html
-from dash.dcc import Markdown
-from .helpers import load_chart, format_features, parse_chart, gender_rows_df
+from dash.dcc import Markdown, Graph
+from .helpers import load_chart, format_features, parse_chart, gender_rows_df, load_plot
+from .chart_class import Chart
 from ..config.config import GENDERS
 
 full_chart, chart_date = load_chart()
 chart_w_features = format_features(full_chart).to_dict('records')
 total_chart_dict = parse_chart(full_chart)
+
+total_fig, pct_fig = (
+    load_plot(full_chart, chart_date, False), 
+    load_plot(full_chart, chart_date, True)
+    )
+
 gender_rows = gender_rows_df(full_chart)
 gender_indexes = list(zip(gender_rows.columns[::2], gender_rows.columns[1::2]))
 gender_rows = gender_rows.to_dict('records')
@@ -58,8 +69,18 @@ def chart_table():
             )
             table_.append(t)
     return table_
-    
 
+def bar_charter(id_, fig):
+    return Graph(
+        id=id_, 
+        figure=fig, 
+        config={
+            'staticPlot': True,
+            'format': 'svg',
+            'displayModeBar': False
+            }
+        )
+    
 topline = [
     html.H1(
             className="site-title s-green",
@@ -86,18 +107,33 @@ topline = [
                     ["#Tally", "#FullChart", "#FAQ"],
                     ["Breakdown by artist", "Current chart", "FAQ"]
                     )
-            ]
+            ], className="spacer"
         )]
 
 header_count = [
-            html.H4(
+    html.Div(children=
+            [html.H4(
                 className="site-title",
                 children=[
                     html.Span(f"{d['gender']}: ", className=d['gender'].lower()),
                     f"{d['count']} Credits ({d['pct']}%)"
-                    ]
-                ) for d in total_chart_dict
-        ]
+                    ]) for d in total_chart_dict],
+            className="spacer"
+    )]
+
+# bar_charts = [
+#     html.Div(
+#         children=[bar_charter(id_, fig) for id_, fig in [('total', total_fig), ('pct', pct_fig)]],
+#         className="bar-charts"
+#     )
+#                 ]
+
+bar_charts = [
+    html.Div(
+        [bar_charter('total', total_fig), bar_charter('pct', pct_fig)],
+        className="bar-charts"
+    )
+    ]
 
 tally_cols = [
             html.H4(
@@ -110,12 +146,13 @@ chart_cols = [
 ]
 
 faq = [
-    html.H4(Markdown(open("README.md").readlines()), className="faq")
-]
+    html.Div(
+        html.H4(Markdown(open("README.md").readlines())), className="spacer"
+        )]
 
 full_layout = html.Div(
     className="wrapper",
-    children= topline + header_count + table_label("Tally") + \
+    children= topline + header_count +  bar_charts + table_label("Tally") + \
         tally_cols + tally_table() + table_label("Full Chart") + chart_cols + chart_table() + table_label("FAQ") + faq
     
     )

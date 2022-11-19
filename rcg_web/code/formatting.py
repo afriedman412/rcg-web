@@ -1,3 +1,7 @@
+"""
+Old version
+"""
+
 from .helpers import load_chart, format_features, parse_chart, load_plot, gender_rows_df
 import dash_bootstrap_components as dbc
 from dash import html, dcc
