@@ -5,14 +5,17 @@ from .. import engine # TODO: this, better
 import datetime as dt
 from ..config.config import COLORS, GENDERS # TODO: also this, better
 import plotly.graph_objects as go
-import logging
+import logging # TODO: add logging
 
 class Chart:
-    def __init__(self):
-        self.full_chart, self.chart_date = self.load_chart()
+    """
+    For acquiring and manipulating chart data.
+    """
+    def __init__(self, date: str=None):
+        self.full_chart, self.chart_date = self.load_chart(date)
         return
 
-    def load_chart(self) -> Tuple[DataFrame, str]:
+    def load_chart(self, date: str=None) -> Tuple[DataFrame, str]:
         """
         Loads the latest Rap Caviar chart from the db.
         
@@ -22,16 +25,25 @@ class Chart:
         full_chart: dataframe
         chart_date: string of latest chart date
         """
-        with engine.connect() as conn:
-            full_chart = pd.read_sql(
-                """
-                SELECT chart.song_name, chart.primary_artist_name, chart_date, artist.artist_name, gender
-                FROM chart
-                INNER JOIN song ON chart.song_spotify_id=song.song_spotify_id
-                LEFT JOIN artist ON song.artist_spotify_id=artist.spotify_id
+        q = """
+            SELECT chart.song_name, chart.primary_artist_name, chart_date, artist.artist_name, gender
+            FROM chart
+            INNER JOIN song ON chart.song_spotify_id=song.song_spotify_id
+            LEFT JOIN artist ON song.artist_spotify_id=artist.spotify_id
+            """
+
+        if not date:
+            q += """
                 WHERE chart_date=(SELECT max(chart_date) FROM chart)
-                """, conn
-                )
+                """
+                
+        else:
+            q += f"""
+                WHERE chart_date='{date}'
+                """
+        
+        with engine.connect() as conn:
+            full_chart = pd.read_sql(q, conn)
 
         full_chart['gender'] = full_chart['gender'].map({"m": "Male", "f": "Female", "n": "Non-Binary"})
         chart_date = full_chart['chart_date'][0]
@@ -89,44 +101,12 @@ class Chart:
     def gender_indexes(self):
         return list(zip(self.gender_counts_prep.columns[::2], self.gender_counts_prep.columns[1::2]))
     
-    def load_plot(self, normalize: bool=False) -> go.Figure:
-        """
-        Creates the bar plot for both total and normalized counts.
-        """
+    def count_df(self, normalize: bool=False) -> Tuple[DataFrame, str]:
         count_df = self.full_chart['gender'].value_counts(normalize=normalize).rename_axis('gender').reset_index(name='count')
         count_df['format'] = 'Percentage' if normalize else 'Total'
-        title = f"Total Artist Credits<br>({self.chart_date})"
-        
+
         if normalize:
-            title = f"% of Artist Credits<br>({self.chart_date})"
             count_df['count'] = count_df['count'].round(3)*100
 
-        fig = go.Figure(
-            go.Bar(
-                x=count_df['gender'], 
-                y=count_df['count'],
-                marker_color=list(COLORS.values()),
-                text=count_df['count'],
-                textposition='outside'
-            )
-        )
-        
-        fig.update_layout(
-            title = {
-                'text':title,
-                'x':0.5,
-                'xanchor': 'center',
-                'yanchor': 'bottom'
-            },
-            yaxis_range=[0,110] if normalize else [
-                0, count_df['count'].max()*1.2],
-            margin=dict(t=70, r=20, l=20, b=30),
-            paper_bgcolor="white",
-            plot_bgcolor="white",
-            autosize=True
-            )
-
-        if normalize:
-            fig.update_traces(texttemplate='%{y:.1f}%')
-
-        return fig
+        title = f"% of Artist Credits<br>({self.chart_date})" if normalize else f"Total Artist Credits<br>({self.chart_date})"
+        return count_df, title

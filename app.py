@@ -13,13 +13,13 @@ logging.basicConfig(
         level=logging.DEBUG
         )
 
+
 ### TODO: add calendar picker and webhooks
-app = Dash( __name__)
-app.title= "Rap Caviar Gender Tracker"
+app = Dash(__name__, title="Rap Caviar Gender Tracker")
 server = app.server
 
-gm = GridMaker()
+gm = GridMaker(date="2022-10-23")
 app.layout = gm.full_layout()
+
 if __name__ == "__main__":
-    
     app.run_server()
