@@ -3,7 +3,7 @@
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 body {
   background-color: black;
-  color: white;
+  color: whitesmoke;
   text-decoration: solid;
   font-size: 1.5em;
   font-weight: 400;
@@ -45,14 +45,26 @@ a {
   display: grid;
   max-width: 960px;
   grid-template-columns: repeat(3, 1fr);
-  grid-column-gap: 2%;
+  grid-column-gap: 1%;
   margin: 5vh auto 2vh;
 }
 
-.bar-charts {
+.bar-chart-container {
   grid-column: 1 / -1;
-  width: 100%;
   float: left;
+} 
+
+.bar-chart {
+  width: 44%;
+  margin: 0 1.5vw;
+}
+
+.l {
+  float: left;
+}
+
+.r {
+  float: right;
 }
 
 .chart-title {
@@ -71,16 +83,26 @@ a {
 }
 
 .grid-item {
-  font-size: 70%;
-  border: 1px solid #666;
+  font-size: 50%;
+  font-weight: bold;
+  /* color: black; */
+  padding: 0.5vh 1vw;
+}
+
+.even {
+  background-color: dimgray;
+}
+
+.odd {
+  background-color: gray;
 }
 
 .tally-artist {
   float: left;
-  color: whitesmoke;
+  /* color: whitesmoke; */
 }
 
 .tally-count {
   float: right;
-  color: whitesmoke;
+  /* color: whitesmoke; */
 }

@@ -1,0 +1,20 @@
+overall:
+- better storage of GENDERS, COLORS and other universal variables
+- better implementation of SQL connections
+- add archival data access via date selector
+- add analysis page (trends over time by gender?)
+- artist-specific analysis
+- compare multiple artists
+- API for above?
+- move logging code out of app.py
+- what did i mean when i wrote "add webhooks"?
+- less harsh aesthetics
+- auto check for no gender entries
+
+grid_class.py:
+- add logging
+- better side-by-side graph formatting (check mobile too)
+- i dont like how full_layout works
+
+chart_class.py:
+- add logging
